@@ -229,14 +229,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error('EmailJS library not loaded. Please refresh the page.');
                 }
 
-                // Send the form with recipient email specified
-                const response = await emailjs.sendForm(
-                    EMAILJS_SERVICE_ID, 
-                    EMAILJS_TEMPLATE_ID, 
-                    contactForm,
-                    {
-                        to_email: TO_EMAIL
-                    }
+                // Get form data manually
+                const formData = new FormData(contactForm);
+                const templateParams = {
+                    from_name: formData.get('from_name'),
+                    from_email: formData.get('from_email'),
+                    message: formData.get('message'),
+                    to_email: TO_EMAIL
+                };
+
+                console.log('Sending with params:', templateParams);
+
+                // Use emailjs.send() instead of sendForm()
+                const response = await emailjs.send(
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ID,
+                    templateParams
                 );
                 
                 console.log('EmailJS response:', response);

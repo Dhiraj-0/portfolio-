@@ -90,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const EMAILJS_PUBLIC_KEY = "MZbEhJjPhY5tKqtRU";
     const EMAILJS_SERVICE_ID = "service_kce75q9";
     const EMAILJS_TEMPLATE_ID = "template_i34m3ns";
-    const TO_EMAIL = "dhirajpurvey07@gmail.com";
 
     function initEmailJS() {
         if (typeof emailjs !== 'undefined') {
@@ -229,22 +228,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error('EmailJS library not loaded. Please refresh the page.');
                 }
 
-                // Get form data manually
-                const formData = new FormData(contactForm);
-                const templateParams = {
-                    from_name: formData.get('from_name'),
-                    from_email: formData.get('from_email'),
-                    message: formData.get('message'),
-                    to_email: TO_EMAIL
-                };
-
-                console.log('Sending with params:', templateParams);
-
-                // Use emailjs.send() instead of sendForm()
-                const response = await emailjs.send(
+                // Use sendForm - it automatically extracts form fields
+                const response = await emailjs.sendForm(
                     EMAILJS_SERVICE_ID,
                     EMAILJS_TEMPLATE_ID,
-                    templateParams
+                    contactForm
                 );
                 
                 console.log('EmailJS response:', response);

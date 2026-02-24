@@ -87,12 +87,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================
     // EMAILJS INITIALIZATION
     // ============================================
-    // EmailJS configuration
     const EMAILJS_PUBLIC_KEY = "MZbEhJjPhY5tKqtRU";
     const EMAILJS_SERVICE_ID = "service_kce75q9";
     const EMAILJS_TEMPLATE_ID = "template_i34m3ns";
+    const TO_EMAIL = "dhirajpurvey07@gmail.com";
 
-    // Initialize EmailJS when the library is ready
     function initEmailJS() {
         if (typeof emailjs !== 'undefined') {
             try {
@@ -109,13 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Wait for EmailJS to load, then initialize
     let emailJSReady = false;
     
     if (typeof emailjs !== 'undefined') {
         emailJSReady = initEmailJS();
     } else {
-        // If not loaded yet, wait for it
         window.addEventListener('load', () => {
             setTimeout(() => {
                 emailJSReady = initEmailJS();
@@ -135,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.classList.toggle('active');
         });
 
-        // Close mobile menu when clicking on a link
         document.querySelectorAll('.nav-links a').forEach(link => {
             link.addEventListener('click', () => {
                 hamburger.classList.remove('active');
@@ -144,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function(e) {
             e.preventDefault();
@@ -158,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Navbar background change on scroll
     const navbar = document.querySelector('.navbar');
     if (navbar) {
         window.addEventListener('scroll', () => {
@@ -189,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    // Observe elements for animation
     document.querySelectorAll('.skill-card, .project-card, .timeline-item, .stat').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(30px)';
@@ -197,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(el);
     });
 
-    // Add animation class
     const style = document.createElement('style');
     style.textContent = `
         .animate {
@@ -207,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
-    // Add staggered delay to cards
     document.querySelectorAll('.skill-card').forEach((card, index) => {
         card.style.transitionDelay = `${index * 0.1}s`;
     });
@@ -234,16 +225,18 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.disabled = true;
 
             try {
-                // Check if EmailJS is ready
                 if (typeof emailjs === 'undefined') {
                     throw new Error('EmailJS library not loaded. Please refresh the page.');
                 }
 
-                // Send the form
+                // Send the form with recipient email specified
                 const response = await emailjs.sendForm(
                     EMAILJS_SERVICE_ID, 
                     EMAILJS_TEMPLATE_ID, 
-                    contactForm
+                    contactForm,
+                    {
+                        to_email: TO_EMAIL
+                    }
                 );
                 
                 console.log('EmailJS response:', response);
@@ -257,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('EmailJS Error:', error);
                 
-                // Provide more specific error message
                 if (error.text) {
                     alert('Failed to send message: ' + error.text);
                 } else if (error.message) {

@@ -84,27 +84,65 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('resize', resizeCanvas);
     }
 
-    // Initialize EmailJS
-    (function() {
-        emailjs.init("MZbEhJjPhY5tKqtRU");
-    })();
+    // ============================================
+    // EMAILJS INITIALIZATION
+    // ============================================
+    // EmailJS configuration
+    const EMAILJS_PUBLIC_KEY = "MZbEhJjPhY5tKqtRU";
+    const EMAILJS_SERVICE_ID = "service_kce75q9";
+    const EMAILJS_TEMPLATE_ID = "template_i34m3ns";
 
-    // Mobile Navigation Toggle
+    // Initialize EmailJS when the library is ready
+    function initEmailJS() {
+        if (typeof emailjs !== 'undefined') {
+            try {
+                emailjs.init(EMAILJS_PUBLIC_KEY);
+                console.log('EmailJS initialized successfully');
+                return true;
+            } catch (error) {
+                console.error('EmailJS init error:', error);
+                return false;
+            }
+        } else {
+            console.error('EmailJS library not loaded');
+            return false;
+        }
+    }
+
+    // Wait for EmailJS to load, then initialize
+    let emailJSReady = false;
+    
+    if (typeof emailjs !== 'undefined') {
+        emailJSReady = initEmailJS();
+    } else {
+        // If not loaded yet, wait for it
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                emailJSReady = initEmailJS();
+            }, 500);
+        });
+    }
+
+    // ============================================
+    // MOBILE NAVIGATION
+    // ============================================
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
 
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('active');
-        navLinks.classList.toggle('active');
-    });
-
-    // Close mobile menu when clicking on a link
-    document.querySelectorAll('.nav-links a').forEach(link => {
-        link.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navLinks.classList.remove('active');
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
         });
-    });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+    }
 
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -122,17 +160,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Navbar background change on scroll
     const navbar = document.querySelector('.navbar');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.style.background = 'rgba(15, 23, 42, 0.98)';
-            navbar.style.boxShadow = '0 2px 30px rgba(0, 0, 0, 0.3)';
-        } else {
-            navbar.style.background = 'rgba(15, 23, 42, 0.95)';
-            navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.2)';
-        }
-    });
+    if (navbar) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(15, 23, 42, 0.98)';
+                navbar.style.boxShadow = '0 2px 30px rgba(0, 0, 0, 0.3)';
+            } else {
+                navbar.style.background = 'rgba(15, 23, 42, 0.95)';
+                navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.2)';
+            }
+        });
+    }
 
-    // Scroll animations using Intersection Observer
+    // ============================================
+    // SCROLL ANIMATIONS
+    // ============================================
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -174,25 +216,55 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.transitionDelay = `${index * 0.15}s`;
     });
 
-    // Contact form submission with EmailJS
+    // ============================================
+    // CONTACT FORM SUBMISSION WITH EMAILJS
+    // ============================================
     const contactForm = document.getElementById('contact-form');
 
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            e.stopPropagation();
             
             const btn = contactForm.querySelector('.btn-primary');
+            if (!btn) return;
+            
             const originalText = btn.textContent;
             btn.textContent = 'Sending...';
             btn.disabled = true;
 
             try {
-                await emailjs.sendForm('service_kce75q9', 'template_i34m3ns', contactForm);
-                alert('Message sent successfully! I\'ll get back to you soon.');
-                contactForm.reset();
+                // Check if EmailJS is ready
+                if (typeof emailjs === 'undefined') {
+                    throw new Error('EmailJS library not loaded. Please refresh the page.');
+                }
+
+                // Send the form
+                const response = await emailjs.sendForm(
+                    EMAILJS_SERVICE_ID, 
+                    EMAILJS_TEMPLATE_ID, 
+                    contactForm
+                );
+                
+                console.log('EmailJS response:', response);
+                
+                if (response.status === 200) {
+                    alert('Message sent successfully! I\'ll get back to you soon.');
+                    contactForm.reset();
+                } else {
+                    alert('Message sent but there may be an issue. Please email me directly.');
+                }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to send message. Please try again or email me directly.');
+                console.error('EmailJS Error:', error);
+                
+                // Provide more specific error message
+                if (error.text) {
+                    alert('Failed to send message: ' + error.text);
+                } else if (error.message) {
+                    alert('Failed to send message: ' + error.message + '. Please try again or email me directly.');
+                } else {
+                    alert('Failed to send message. Please try again or email me directly.');
+                }
             } finally {
                 btn.textContent = originalText;
                 btn.disabled = false;
@@ -200,16 +272,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Add parallax effect to hero section
+    // ============================================
+    // PARALLAX EFFECT
+    // ============================================
     const hero = document.querySelector('.hero');
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        if (hero) {
+    if (hero) {
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
             hero.style.backgroundPositionY = `${scrolled * 0.5}px`;
-        }
-    });
+        });
+    }
 
-    // Typing effect for tagline
+    // ============================================
+    // TYPING EFFECT FOR TAGLINE
+    // ============================================
     const tagline = document.querySelector('.tagline');
     if (tagline) {
         const text = tagline.textContent;
@@ -227,7 +303,9 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(typeWriter, 1000);
     }
 
-    // Skill cards hover effect
+    // ============================================
+    // SKILL CARDS HOVER EFFECT
+    // ============================================
     document.querySelectorAll('.skill-card').forEach(card => {
         card.addEventListener('mouseenter', () => {
             card.style.transform = 'translateY(-10px) scale(1.02)';
@@ -238,7 +316,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Active link highlighting
+    // ============================================
+    // ACTIVE LINK HIGHLIGHTING
+    // ============================================
     const sections = document.querySelectorAll('section');
     const navItems = document.querySelectorAll('.nav-links a');
 

@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize EmailJS
+    (function() {
+        emailjs.init("MZbEhJjPhY5tKqtRU");
+    })();
+
     // Mobile Navigation Toggle
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
@@ -84,22 +89,29 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.transitionDelay = `${index * 0.15}s`;
     });
 
-    // Contact form submission
-    const contactForm = document.querySelector('.contact-form');
+    // Contact form submission with EmailJS
+    const contactForm = document.getElementById('contact-form');
+
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Get form values
-            const name = contactForm.querySelector('input[type="text"]').value;
-            const email = contactForm.querySelector('input[type="email"]').value;
-            const message = contactForm.querySelector('textarea').value;
-            
-            // Show success message (in production, you'd send to a server)
-            alert(`Thank you, ${name}! Your message has been sent. I'll get back to you at ${email} soon.`);
-            
-            // Reset form
-            contactForm.reset();
+            const btn = contactForm.querySelector('.btn-primary');
+            const originalText = btn.textContent;
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            try {
+                await emailjs.sendForm('service_kce75q9', 'template_i34m3ns', contactForm);
+                alert('Message sent successfully! I\'ll get back to you soon.');
+                contactForm.reset();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to send message. Please try again or email me directly.');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
         });
     }
 
@@ -127,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        // Start typing after a delay
         setTimeout(typeWriter, 1000);
     }
 

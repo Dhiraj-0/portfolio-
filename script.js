@@ -85,41 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ============================================
-    // EMAILJS INITIALIZATION
-    // ============================================
-    const EMAILJS_PUBLIC_KEY = "MZbEhJjPhY5tKqtRU";
-    const EMAILJS_SERVICE_ID = "service_kce75q9";
-    const EMAILJS_TEMPLATE_ID = "template_i34m3ns";
-
-    function initEmailJS() {
-        if (typeof emailjs !== 'undefined') {
-            try {
-                emailjs.init(EMAILJS_PUBLIC_KEY);
-                console.log('EmailJS initialized successfully');
-                return true;
-            } catch (error) {
-                console.error('EmailJS init error:', error);
-                return false;
-            }
-        } else {
-            console.error('EmailJS library not loaded');
-            return false;
-        }
-    }
-
-    let emailJSReady = false;
-    
-    if (typeof emailjs !== 'undefined') {
-        emailJSReady = initEmailJS();
-    } else {
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                emailJSReady = initEmailJS();
-            }, 500);
-        });
-    }
-
-    // ============================================
     // MOBILE NAVIGATION
     // ============================================
     const hamburger = document.querySelector('.hamburger');
@@ -207,56 +172,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ============================================
-    // CONTACT FORM SUBMISSION WITH EMAILJS
+    // CONTACT FORM - Using mailto as fallback
     // ============================================
     const contactForm = document.getElementById('contact-form');
 
     if (contactForm) {
-        contactForm.addEventListener('submit', async (e) => {
+        // Override form submission to use mailto
+        contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            e.stopPropagation();
             
-            const btn = contactForm.querySelector('.btn-primary');
-            if (!btn) return;
+            // Get form values
+            const name = contactForm.querySelector('input[name="name"]').value;
+            const email = contactForm.querySelector('input[name="email"]').value;
+            const message = contactForm.querySelector('textarea[name="message"]').value;
             
-            const originalText = btn.textContent;
-            btn.textContent = 'Sending...';
-            btn.disabled = true;
-
-            try {
-                if (typeof emailjs === 'undefined') {
-                    throw new Error('EmailJS library not loaded. Please refresh the page.');
-                }
-
-                // Use sendForm - it automatically extracts form fields
-                const response = await emailjs.sendForm(
-                    EMAILJS_SERVICE_ID,
-                    EMAILJS_TEMPLATE_ID,
-                    contactForm
-                );
-                
-                console.log('EmailJS response:', response);
-                
-                if (response.status === 200) {
-                    alert('Message sent successfully! I\'ll get back to you soon.');
-                    contactForm.reset();
-                } else {
-                    alert('Message sent but there may be an issue. Please email me directly.');
-                }
-            } catch (error) {
-                console.error('EmailJS Error:', error);
-                
-                if (error.text) {
-                    alert('Failed to send message: ' + error.text);
-                } else if (error.message) {
-                    alert('Failed to send message: ' + error.message + '. Please try again or email me directly.');
-                } else {
-                    alert('Failed to send message. Please try again or email me directly.');
-                }
-            } finally {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
+            // Create mailto link
+            const subject = encodeURIComponent(`Portfolio Contact from ${name}`);
+            const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+            const mailtoLink = `mailto:dhirajpurvey07@gmail.com?subject=${subject}&body=${body}`;
+            
+            // Open email client
+            window.location.href = mailtoLink;
+            
+            // Show success message
+            alert('Your email client has opened with the message. Please send it to complete your inquiry.');
+            contactForm.reset();
         });
     }
 

@@ -10,6 +10,25 @@
     --gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
     --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     --transition: all 0.3s ease;
+    --navbar-bg: rgba(15, 23, 42, 0.95);
+    --bg-animation-bg: linear-gradient(135deg, #0a0a1a 0%, #0d1b2a 50%, #1b0a2e 100%);
+    --form-input-bg: #1e293b;
+    --form-input-border: transparent;
+    --footer-bg: #1e293b;
+}
+
+/* Light Theme */
+body.light-theme {
+    --dark-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --navbar-bg: rgba(248, 250, 252, 0.95);
+    --bg-animation-bg: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #faf5ff 100%);
+    --form-input-bg: #f1f5f9;
+    --form-input-border: #e2e8f0;
+    --footer-bg: #ffffff;
 }
 
 /* Reset & Base Styles */
@@ -29,6 +48,7 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ============================================
@@ -42,7 +62,8 @@ body {
     height: 100%;
     z-index: -1;
     overflow: hidden;
-    background: linear-gradient(135deg, #0a0a1a 0%, #0d1b2a 50%, #1b0a2e 100%);
+    background: var(--bg-animation-bg);
+    transition: background 0.3s ease;
 }
 
 /* Particle Canvas */
@@ -176,11 +197,12 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(15, 23, 42, 0.95);
+    background: var(--navbar-bg);
     backdrop-filter: blur(10px);
     z-index: 1000;
     padding: 1rem 0;
     box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
 }
 
 .navbar .container {
@@ -241,6 +263,47 @@ body {
     background: var(--text-primary);
     border-radius: 3px;
     transition: var(--transition);
+}
+
+/* Theme Toggle Button */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.theme-toggle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    transition: var(--transition);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background: var(--gradient);
+    color: white;
+}
+
+body.light-theme .theme-toggle .fa-moon {
+    display: none;
+}
+
+body.light-theme .theme-toggle .fa-sun {
+    display: block;
+}
+
+.theme-toggle .fa-sun {
+    display: none;
 }
 
 /* Hero Section */
@@ -798,8 +861,8 @@ a.contact-item {
 .contact-form input,
 .contact-form textarea {
     padding: 1rem 1.5rem;
-    background: var(--card-bg);
-    border: 2px solid transparent;
+    background: var(--form-input-bg);
+    border: 2px solid var(--form-input-border);
     border-radius: 10px;
     color: var(--text-primary);
     font-family: inherit;
@@ -820,7 +883,7 @@ a.contact-item {
 
 /* Footer */
 footer {
-    background: var(--card-bg);
+    background: var(--footer-bg);
     padding: 2rem 0;
     text-align: center;
 }
@@ -891,7 +954,6 @@ footer p {
 
 /* Tablet and Mobile (below 768px) */
 @media (max-width: 768px) {
-    /* Base responsive adjustments */
     section {
         padding: 60px 0;
     }
@@ -900,7 +962,6 @@ footer p {
         padding: 0 15px;
     }
 
-    /* Navigation */
     .navbar {
         padding: 0.75rem 0;
     }
@@ -960,7 +1021,6 @@ footer p {
         transform: rotate(-45deg) translate(4px, -4px);
     }
 
-    /* Hero Section */
     .hero {
         padding: 80px 0 40px;
         min-height: auto;
@@ -1010,7 +1070,6 @@ footer p {
         justify-content: center;
     }
 
-    /* Profile Image */
     .profile-img {
         width: 180px;
         height: 180px;
@@ -1021,7 +1080,6 @@ footer p {
         animation: profile-float 4s ease-in-out infinite;
     }
 
-    /* Section Titles */
     .section-title {
         font-size: 1.75rem;
         margin-bottom: 2rem;
@@ -1034,7 +1092,6 @@ footer p {
         bottom: -10px;
     }
 
-    /* About Section */
     .about-text p {
         font-size: 1rem;
         line-height: 1.7;
@@ -1061,7 +1118,6 @@ footer p {
         font-size: 0.85rem;
     }
 
-    /* Skills Section */
     .skill-category {
         margin-bottom: 1.5rem;
     }
@@ -1098,7 +1154,6 @@ footer p {
         font-size: 0.85rem;
     }
 
-    /* Projects Section */
     .projects-grid {
         grid-template-columns: 1fr;
         gap: 1.5rem;
@@ -1142,7 +1197,6 @@ footer p {
         font-size: 0.8rem;
     }
 
-    /* Certifications Section */
     .certifications-grid {
         grid-template-columns: 1fr;
         gap: 1.25rem;
@@ -1179,7 +1233,6 @@ footer p {
         font-size: 0.8rem;
     }
 
-    /* Education Section */
     .education-card {
         padding: 1.5rem;
         flex-direction: column;
@@ -1206,7 +1259,6 @@ footer p {
         font-size: 0.8rem;
     }
 
-    /* Contact Section */
     .contact-content {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -1253,7 +1305,6 @@ footer p {
         font-size: 1rem;
     }
 
-    /* Footer */
     footer {
         padding: 1.5rem 0;
     }
@@ -1299,7 +1350,6 @@ footer p {
         margin-bottom: 1.5rem;
     }
 
-    /* About Stats */
     .about-stats {
         gap: 1rem;
     }
@@ -1312,7 +1362,6 @@ footer p {
         font-size: 0.8rem;
     }
 
-    /* Skills Grid - 2 columns */
     .skills-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.6rem;
@@ -1335,7 +1384,6 @@ footer p {
         font-size: 0.75rem;
     }
 
-    /* Projects */
     .project-card {
         padding: 1rem;
     }
@@ -1355,7 +1403,6 @@ footer p {
         -webkit-line-clamp: 2;
     }
 
-    /* Certifications */
     .certification-card {
         padding: 1rem;
     }
@@ -1375,7 +1422,6 @@ footer p {
         font-size: 0.75rem;
     }
 
-    /* Education */
     .education-card {
         padding: 1.25rem;
     }
@@ -1390,7 +1436,6 @@ footer p {
         font-size: 1rem;
     }
 
-    /* Contact */
     .contact-item {
         padding: 0.75rem;
         flex-direction: column;
@@ -1408,7 +1453,6 @@ footer p {
         font-size: 0.9rem;
     }
 
-    /* Buttons - Touch friendly */
     .btn,
     .hero-buttons .btn,
     .contact-form .btn {

@@ -262,11 +262,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        navItems.forEach(item => {
+navItems.forEach(item => {
             item.style.color = '';
             if (item.getAttribute('href') === `#${current}`) {
                 item.style.color = '#2563eb';
             }
         });
     });
+
+    // ============================================
+    // THEME TOGGLE
+    // ============================================
+    const themeToggle = document.getElementById('theme-toggle');
+    
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            
+            // Save theme preference
+            if (document.body.classList.contains('light-theme')) {
+                localStorage.setItem('theme', 'light');
+            } else {
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    }
 });
